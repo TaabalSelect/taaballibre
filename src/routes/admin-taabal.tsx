@@ -11,6 +11,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Logo } from "@/components/Logo";
 import { Trash2, LogOut, Upload, Plus, Save } from "lucide-react";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
+import { arrayMove, SortableContext, rectSortingStrategy, useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 export const Route = createFileRoute("/admin-taabal")({
   head: () => ({ meta: [{ title: "Admin · TAABAL" }, { name: "robots", content: "noindex,nofollow" }] }),
@@ -68,13 +71,19 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         <Tabs defaultValue="leads">
           <TabsList>
             <TabsTrigger value="leads">Leads</TabsTrigger>
+            <TabsTrigger value="texts">Textos</TabsTrigger>
             <TabsTrigger value="packages">Paquetes</TabsTrigger>
             <TabsTrigger value="gallery">Galería</TabsTrigger>
+            <TabsTrigger value="social">Testimonios</TabsTrigger>
+            <TabsTrigger value="privacy">Privacidad</TabsTrigger>
             <TabsTrigger value="settings">Ajustes</TabsTrigger>
           </TabsList>
           <TabsContent value="leads"><LeadsPanel /></TabsContent>
+          <TabsContent value="texts"><TextsPanel /></TabsContent>
           <TabsContent value="packages"><PackagesPanel /></TabsContent>
           <TabsContent value="gallery"><GalleryPanel /></TabsContent>
+          <TabsContent value="social"><SocialPanel /></TabsContent>
+          <TabsContent value="privacy"><PrivacyPanel /></TabsContent>
           <TabsContent value="settings"><SettingsPanel /></TabsContent>
         </Tabs>
       </div>

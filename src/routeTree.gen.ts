@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as AdminTaabalRouteImport } from './routes/admin-taabal'
 import { Route as IndexRouteImport } from './routes/index'
 
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
   id: '/unsubscribe',
   path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminTaabalRoute = AdminTaabalRouteImport.update({
@@ -32,30 +38,34 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin-taabal': typeof AdminTaabalRoute
+  '/privacidad': typeof PrivacidadRoute
   '/unsubscribe': typeof UnsubscribeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin-taabal': typeof AdminTaabalRoute
+  '/privacidad': typeof PrivacidadRoute
   '/unsubscribe': typeof UnsubscribeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin-taabal': typeof AdminTaabalRoute
+  '/privacidad': typeof PrivacidadRoute
   '/unsubscribe': typeof UnsubscribeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin-taabal' | '/unsubscribe'
+  fullPaths: '/' | '/admin-taabal' | '/privacidad' | '/unsubscribe'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin-taabal' | '/unsubscribe'
-  id: '__root__' | '/' | '/admin-taabal' | '/unsubscribe'
+  to: '/' | '/admin-taabal' | '/privacidad' | '/unsubscribe'
+  id: '__root__' | '/' | '/admin-taabal' | '/privacidad' | '/unsubscribe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminTaabalRoute: typeof AdminTaabalRoute
+  PrivacidadRoute: typeof PrivacidadRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
 }
 
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/unsubscribe'
       fullPath: '/unsubscribe'
       preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin-taabal': {
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminTaabalRoute: AdminTaabalRoute,
+  PrivacidadRoute: PrivacidadRoute,
   UnsubscribeRoute: UnsubscribeRoute,
 }
 export const routeTree = rootRouteImport
