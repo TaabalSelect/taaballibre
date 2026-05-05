@@ -128,23 +128,28 @@ function useContactInfo() {
 
 function Landing() {
   const rabbitsOn = useRabbitsEnabled();
+  const contactInfo = useContactInfo();
   return (
     <main className="relative overflow-x-clip bg-background text-foreground">
-      <Nav />
+      <Nav contact={contactInfo} />
       <Hero rabbitsOn={rabbitsOn} />
       <Pillars rabbitsOn={rabbitsOn} />
-      <ChampagneSequence />
+      <ChampagneFeature />
+      <WhyUs />
+      <ProcessSteps />
       <Packages rabbitsOn={rabbitsOn} />
       <Gallery />
+      <Stats />
       <SocialProof />
-      <Contact rabbitsOn={rabbitsOn} />
+      <FAQ />
+      <Contact rabbitsOn={rabbitsOn} contact={contactInfo} />
       <Footer />
-      <FloatingWhatsApp />
+      <FloatingWhatsApp whatsapp={contactInfo.whatsapp} />
     </main>
   );
 }
 
-function Nav() {
+function Nav({ contact }: { contact: typeof DEFAULT_CONTACT_INFO }) {
   const [scrolled, setScrolled] = useState(false);
   const [locale, setLocale] = useLocale();
   const tr = t(locale).nav;
