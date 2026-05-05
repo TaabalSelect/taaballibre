@@ -3,11 +3,15 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Logo } from "@/components/Logo";
 import { RabbitPeek, useRabbitsEnabled } from "@/components/RabbitPeek";
-import { Margarita3D } from "@/components/Margarita3D";
+import { MargaritaSequence } from "@/components/MargaritaSequence";
+import { Lightbox } from "@/components/Lightbox";
+import { SocialProof } from "@/components/SocialProof";
+import { useLocale, t } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -28,16 +32,65 @@ export const Route = createFileRoute("/")({
       { title: "TAABAL Barras Libres — Mixología de Lujo · Bodas Riviera Maya" },
       { name: "description", content: "Barra libre de mixología premium para bodas en Cancún, Tulum, Playa del Carmen, Puerto Morelos e Isla Mujeres. Cócteles de autor, servicio impecable." },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "LocalBusiness",
+              "@id": "https://taaballibre.lovable.app/#business",
+              name: "TAABAL Barras Libres",
+              description: "Barra libre de mixología premium para bodas en la Riviera Maya.",
+              image: "https://taaballibre.lovable.app/og.jpg",
+              telephone: "+52 998 123 4567",
+              email: "hola@taabal.mx",
+              priceRange: "$$$",
+              areaServed: ["Cancún", "Tulum", "Playa del Carmen", "Puerto Morelos", "Isla Mujeres"],
+              address: { "@type": "PostalAddress", addressRegion: "Quintana Roo", addressCountry: "MX" },
+            },
+            {
+              "@type": "Service",
+              serviceType: "Barra libre boda Tulum",
+              name: "Mixología de lujo para bodas",
+              provider: { "@id": "https://taaballibre.lovable.app/#business" },
+              areaServed: [
+                { "@type": "City", name: "Tulum" },
+                { "@type": "City", name: "Cancún" },
+                { "@type": "City", name: "Playa del Carmen" },
+              ],
+              audience: { "@type": "Audience", audienceType: "Bodas destination" },
+            },
+          ],
+        }),
+      },
+    ],
   }),
   component: Landing,
 });
 
-const PILLARS = [
+const DEFAULT_PILLARS = [
   { icon: Wine, title: "Mixología de Autor", desc: "Cada cóctel es una pieza única, creada por mixólogos certificados que elevan los sabores de la Riviera." },
   { icon: Sparkles, title: "Servicio Excepcional", desc: "Equipo entrenado para anticiparse: tu único trabajo es disfrutar y celebrar." },
   { icon: Users, title: "Presentación Impecable", desc: "Barras de diseño, cristalería de lujo, hielo cristal y garnish que se ve tan bien como sabe." },
   { icon: MapPin, title: "Riviera Maya", desc: "Cancún, Tulum, Playa del Carmen, Puerto Morelos e Isla Mujeres. Locales, cero improvisaciones." },
 ];
+const PILLAR_ICONS = [Wine, Sparkles, Users, MapPin];
+
+const DEFAULT_HERO = {
+  badge: "Riviera Maya · Bodas exclusivas",
+  title_1: "La barra libre que",
+  title_2: "tu boda",
+  title_3: "merece.",
+  subtitle: "Mixología de autor, servicio impecable y cero filas. Diseñamos la experiencia de bar para bodas inolvidables en la Riviera Maya.",
+};
+
+const DEFAULT_CONTACT_TEXT = {
+  eyebrow: "Cotiza tu boda",
+  title: "Brindemos juntos.",
+  subtitle: "Cuéntanos los detalles. Te respondemos en menos de 24 horas.",
+};
 
 const DEFAULT_PACKAGES = [
   { name: "Signature", price: "Desde $35,000 MXN", tagline: "La esencia TAABAL", features: ["Mixología clásica de autor", "Bartender certificado", "Cristalería premium", "Hasta 80 invitados", "4 horas de servicio"] },
@@ -45,7 +98,7 @@ const DEFAULT_PACKAGES = [
   { name: "Personalizado", price: "Cotización a medida", tagline: "Tu boda, tus reglas", features: ["Diseño 100% a medida", "Equipo dedicado", "Cócteles con tu nombre", "Sin límite de invitados", "Servicio fluido", "Decoración temática"] },
 ];
 
-const GALLERY = [g1, g2, g3, g4, g5, g6];
+const FALLBACK_GALLERY = [g1, g2, g3, g4, g5, g6].map((url, i) => ({ url, alt: `Boda Riviera Maya ${i + 1}` }));
 
 const leadSchema = z.object({
   name: z.string().trim().min(2, "Tu nombre").max(100),
@@ -66,9 +119,10 @@ function Landing() {
       <Nav />
       <Hero rabbitsOn={rabbitsOn} />
       <Pillars rabbitsOn={rabbitsOn} />
-      <MargaritaScroll />
+      <MargaritaSequence />
       <Packages rabbitsOn={rabbitsOn} />
       <Gallery />
+      <SocialProof />
       <Contact rabbitsOn={rabbitsOn} />
       <Footer />
       <FloatingWhatsApp />
@@ -78,6 +132,8 @@ function Landing() {
 
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [locale, setLocale] = useLocale();
+  const tr = t(locale).nav;
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
@@ -88,14 +144,21 @@ function Nav() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Logo className="h-10 w-auto" />
         <nav className="hidden md:flex items-center gap-8 text-sm tracking-wide">
-          <a href="#experiencia" className="hover:text-primary transition">Experiencia</a>
-          <a href="#paquetes" className="hover:text-primary transition">Paquetes</a>
-          <a href="#galeria" className="hover:text-primary transition">Galería</a>
-          <a href="#contacto" className="hover:text-primary transition">Contacto</a>
+          <a href="#experiencia" className="hover:text-primary transition">{tr.experience}</a>
+          <a href="#paquetes" className="hover:text-primary transition">{tr.packages}</a>
+          <a href="#galeria" className="hover:text-primary transition">{tr.gallery}</a>
+          <a href="#contacto" className="hover:text-primary transition">{tr.contact}</a>
         </nav>
-        <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-          <a href="#contacto">Cotizar</a>
-        </Button>
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center text-xs tracking-widest text-muted-foreground">
+            <button onClick={() => setLocale("es")} className={locale === "es" ? "text-primary" : "hover:text-foreground"}>ES</button>
+            <span className="mx-1.5 opacity-40">/</span>
+            <button onClick={() => setLocale("en")} className={locale === "en" ? "text-primary" : "hover:text-foreground"}>EN</button>
+          </div>
+          <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <a href="#contacto">{tr.quote}</a>
+          </Button>
+        </div>
       </div>
     </header>
   );
@@ -106,6 +169,12 @@ function Hero({ rabbitsOn }: { rabbitsOn: boolean }) {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const [content, setContent] = useState(DEFAULT_HERO);
+  useEffect(() => {
+    supabase.from("site_content").select("value").eq("key", "hero").maybeSingle().then(({ data }) => {
+      if (data?.value && typeof data.value === "object") setContent({ ...DEFAULT_HERO, ...(data.value as any) });
+    });
+  }, []);
   return (
     <section ref={ref} className="relative h-[100svh] w-full overflow-hidden">
       <motion.div style={{ y, opacity }} className="absolute inset-0">
@@ -118,20 +187,20 @@ function Hero({ rabbitsOn }: { rabbitsOn: boolean }) {
         <div className="pointer-events-auto flex flex-col items-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
           <Badge variant="outline" className="mb-6 border-primary/40 text-primary backdrop-blur-sm">
-            Riviera Maya · Bodas exclusivas
+            {content.badge}
           </Badge>
         </motion.div>
         <motion.h1
           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, delay: 0.2 }}
           className="font-display text-5xl md:text-7xl lg:text-8xl leading-[0.95] max-w-5xl"
         >
-          La barra libre que <span className="text-gradient-brand">tu boda</span> merece.
+          {content.title_1} <span className="text-gradient-brand">{content.title_2}</span> {content.title_3}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.6 }}
           className="mt-6 max-w-xl text-lg text-muted-foreground"
         >
-          Mixología de autor, servicio impecable y cero filas. Diseñamos la experiencia de bar para bodas inolvidables en la Riviera Maya.
+          {content.subtitle}
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.9 }}
@@ -156,6 +225,15 @@ function Hero({ rabbitsOn }: { rabbitsOn: boolean }) {
 }
 
 function Pillars({ rabbitsOn }: { rabbitsOn: boolean }) {
+  const [pillars, setPillars] = useState(DEFAULT_PILLARS);
+  useEffect(() => {
+    supabase.from("site_content").select("value").eq("key", "pillars").maybeSingle().then(({ data }) => {
+      if (Array.isArray(data?.value)) {
+        const arr = (data!.value as any[]).map((p, i) => ({ icon: PILLAR_ICONS[i % PILLAR_ICONS.length], title: p.title || "", desc: p.desc || "" }));
+        if (arr.length) setPillars(arr);
+      }
+    });
+  }, []);
   return (
     <section id="experiencia" className="relative py-32 px-6">
       <RabbitPeek variant="howl" side="left" size={150} enabled={rabbitsOn} className="left-[-20px] top-4 opacity-60" />
@@ -165,7 +243,7 @@ function Pillars({ rabbitsOn }: { rabbitsOn: boolean }) {
           <h2 className="mt-4 font-display text-4xl md:text-6xl">Cuatro pilares, una experiencia.</h2>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {PILLARS.map((p, i) => (
+          {pillars.map((p, i) => (
             <motion.div
               key={p.title}
               initial={{ opacity: 0, y: 30 }}
@@ -180,32 +258,6 @@ function Pillars({ rabbitsOn }: { rabbitsOn: boolean }) {
               </Card>
             </motion.div>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function MargaritaScroll() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  return (
-    <section ref={ref} className="relative h-[400vh]">
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-background via-card to-background">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.15),transparent_60%)]" />
-        <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl px-6 w-full relative z-10">
-          <div className="relative z-10">
-            <span className="text-xs uppercase tracking-[0.4em] text-accent">Nuestro ritual</span>
-            <h2 className="mt-4 font-display text-4xl md:text-6xl leading-tight">
-              La <span className="text-gradient-brand">margarita perfecta</span>, pieza por pieza.
-            </h2>
-            <p className="mt-6 text-muted-foreground max-w-md">
-              Cada elemento importa: el corte del lime, la sal artesanal, el hielo cristal, la dosificación exacta. Desliza y observa cómo nace una de nuestras firmas.
-            </p>
-          </div>
-          <div className="relative h-[560px] w-full">
-            <Margarita3D progress={scrollYProgress} />
-          </div>
         </div>
       </div>
     </section>
