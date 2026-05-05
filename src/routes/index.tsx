@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Logo } from "@/components/Logo";
 import { RabbitPeek, useRabbitsEnabled } from "@/components/RabbitPeek";
-import { ChampagneSequence } from "@/components/ChampagneSequence";
 import { Lightbox } from "@/components/Lightbox";
 import { SocialProof } from "@/components/SocialProof";
 import { useLocale, t } from "@/lib/i18n";
@@ -17,8 +16,9 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Sparkles, Wine, Users, MessageCircle, Mail, Phone, Instagram, Facebook, Check } from "lucide-react";
+import { MapPin, Sparkles, Wine, Users, MessageCircle, Mail, Phone, Instagram, Facebook, Check, Award, Clock, Heart, ShieldCheck, Star, Quote } from "lucide-react";
 import hero from "@/assets/hero-bar.jpg";
+import champagnePop from "@/assets/champagne-pop.png";
 import g1 from "@/assets/gallery-1.jpg";
 import g2 from "@/assets/gallery-2.jpg";
 import g3 from "@/assets/gallery-3.jpg";
@@ -110,7 +110,21 @@ const leadSchema = z.object({
   message: z.string().trim().max(1000).optional().or(z.literal("")),
 });
 
-const WHATSAPP = "529981234567";
+const DEFAULT_CONTACT_INFO = {
+  email: "barrascancun@taabalcancun.com",
+  whatsapp: "529981234567",
+  phone: "+52 998 123 4567",
+};
+
+function useContactInfo() {
+  const [info, setInfo] = useState(DEFAULT_CONTACT_INFO);
+  useEffect(() => {
+    supabase.from("site_content").select("value").eq("key", "contact_info").maybeSingle().then(({ data }) => {
+      if (data?.value && typeof data.value === "object") setInfo({ ...DEFAULT_CONTACT_INFO, ...(data.value as any) });
+    });
+  }, []);
+  return info;
+}
 
 function Landing() {
   const rabbitsOn = useRabbitsEnabled();
