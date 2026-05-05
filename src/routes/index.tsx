@@ -18,7 +18,6 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Sparkles, Wine, Users, MessageCircle, Mail, Phone, Instagram, Facebook, Check, Award, Clock, Heart, ShieldCheck, Star, Quote } from "lucide-react";
 import hero from "@/assets/hero-bar.jpg";
-import champagnePop from "@/assets/champagne-pop.png";
 import g1 from "@/assets/gallery-1.jpg";
 import g2 from "@/assets/gallery-2.jpg";
 import g3 from "@/assets/gallery-3.jpg";
