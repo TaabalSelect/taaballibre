@@ -630,3 +630,47 @@ function SocialPanel() {
     </div>
   );
 }
+
+/* ---------------- Contact Info Panel ---------------- */
+function ContactPanel() {
+  const [info, setInfo] = useState({ email: "barrascancun@taabalcancun.com", whatsapp: "529981234567", phone: "+52 998 123 4567" });
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    supabase.from("site_content").select("value").eq("key", "contact_info").maybeSingle().then(({ data }) => {
+      if (data?.value && typeof data.value === "object") setInfo(v => ({ ...v, ...(data.value as any) }));
+    });
+  }, []);
+  const save = async () => {
+    setBusy(true);
+    const { error } = await supabase.from("site_content").upsert({ key: "contact_info", value: info as any });
+    setBusy(false);
+    if (error) toast.error(error.message); else toast.success("Datos de contacto guardados");
+  };
+  return (
+    <div className="space-y-6 max-w-2xl">
+      <Card className="p-6 space-y-4">
+        <div>
+          <h3 className="font-display text-xl">Datos de contacto públicos</h3>
+          <p className="text-sm text-muted-foreground mt-1">Estos datos se usan en el footer, formulario, botón flotante y links de la web.</p>
+        </div>
+        <div>
+          <Label>Email (mailto:)</Label>
+          <Input type="email" value={info.email} onChange={e => setInfo({ ...info, email: e.target.value })} placeholder="barrascancun@taabalcancun.com" />
+          <p className="text-xs text-muted-foreground mt-1">Se abrirá como mailto:{info.email}</p>
+        </div>
+        <div>
+          <Label>WhatsApp (solo números, sin + ni espacios)</Label>
+          <Input value={info.whatsapp} onChange={e => setInfo({ ...info, whatsapp: e.target.value.replace(/\D/g, "") })} placeholder="529981234567" />
+          <p className="text-xs text-muted-foreground mt-1">Se abrirá como https://wa.me/{info.whatsapp || "..."}</p>
+        </div>
+        <div>
+          <Label>Teléfono visible (formato libre)</Label>
+          <Input value={info.phone} onChange={e => setInfo({ ...info, phone: e.target.value })} placeholder="+52 998 123 4567" />
+        </div>
+        <div className="flex justify-end">
+          <Button onClick={save} disabled={busy}><Save className="h-4 w-4 mr-2" />{busy ? "Guardando..." : "Guardar"}</Button>
+        </div>
+      </Card>
+    </div>
+  );
+}
