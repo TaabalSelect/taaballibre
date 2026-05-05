@@ -555,20 +555,93 @@ function ChampagneFeature() {
           transition={{ duration: 1 }}
           className="relative"
         >
-          {/* Glow ambiental detrás para fundir con el fondo */}
-          <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 blur-3xl opacity-70 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.35),rgba(255,180,80,0.18)_40%,transparent_70%)]" />
-          <motion.img
-            src={champagnePop}
-            alt="Botella de champagne descorchándose con explosión de espuma"
-            className="w-full h-auto select-none [filter:drop-shadow(0_30px_40px_rgba(0,0,0,0.55))_drop-shadow(0_0_80px_rgba(168,85,247,0.35))]"
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            loading="lazy"
-            draggable={false}
-          />
+          <BrindisEmblem />
         </motion.div>
       </div>
     </section>
+  );
+}
+
+function BrindisEmblem() {
+  const stats = [
+    { k: "200+", v: "Bodas" },
+    { k: "12", v: "Mixólogos" },
+    { k: "98%", v: "Satisfacción" },
+    { k: "24/7", v: "Soporte" },
+  ];
+  return (
+    <div className="relative aspect-square w-full max-w-xl mx-auto">
+      {/* Glow ambiental */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 blur-3xl opacity-80 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.45),rgba(255,180,80,0.22)_40%,transparent_70%)]" />
+
+      {/* Anillos orbitales */}
+      <motion.div
+        className="absolute inset-6 rounded-full border border-primary/30"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+      >
+        <span className="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-primary shadow-[0_0_20px_rgba(255,200,100,0.8)]" />
+      </motion.div>
+      <motion.div
+        className="absolute inset-16 rounded-full border border-secondary/40"
+        animate={{ rotate: -360 }}
+        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+      >
+        <span className="absolute top-1/2 -right-1 h-2 w-2 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_15px_rgba(255,140,80,0.9)]" />
+      </motion.div>
+
+      {/* Burbujas flotando */}
+      {[...Array(8)].map((_, i) => (
+        <motion.span
+          key={i}
+          aria-hidden
+          className="absolute rounded-full bg-primary/40 backdrop-blur-sm"
+          style={{
+            width: 6 + (i % 4) * 4,
+            height: 6 + (i % 4) * 4,
+            left: `${10 + (i * 11) % 80}%`,
+            bottom: 0,
+          }}
+          animate={{ y: [0, -380 - (i % 3) * 40], opacity: [0, 0.8, 0] }}
+          transition={{ duration: 6 + (i % 3), repeat: Infinity, delay: i * 0.7, ease: "easeOut" }}
+        />
+      ))}
+
+      {/* Núcleo central — monograma TAABAL */}
+      <motion.div
+        className="absolute inset-1/4 rounded-full bg-gradient-to-br from-card to-background border border-primary/40 shadow-[0_0_60px_rgba(168,85,247,0.35)] flex items-center justify-center"
+        animate={{ y: [0, -8, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <div className="text-center">
+          <div className="font-display text-5xl md:text-6xl text-gradient-brand leading-none">T</div>
+          <div className="mt-2 text-[10px] tracking-[0.5em] text-muted-foreground uppercase">Taabal</div>
+        </div>
+      </motion.div>
+
+      {/* Stats orbitales */}
+      {stats.map((s, i) => {
+        const positions = [
+          "top-2 left-1/2 -translate-x-1/2",
+          "right-2 top-1/2 -translate-y-1/2",
+          "bottom-2 left-1/2 -translate-x-1/2",
+          "left-2 top-1/2 -translate-y-1/2",
+        ];
+        return (
+          <motion.div
+            key={s.v}
+            initial={{ opacity: 0, scale: 0.5 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 + i * 0.15, duration: 0.6 }}
+            className={`absolute ${positions[i]} rounded-full bg-card/80 backdrop-blur border border-border px-4 py-2 text-center shadow-xl`}
+          >
+            <div className="font-display text-lg text-primary leading-none">{s.k}</div>
+            <div className="text-[9px] uppercase tracking-widest text-muted-foreground mt-1">{s.v}</div>
+          </motion.div>
+        );
+      })}
+    </div>
   );
 }
 
