@@ -13,7 +13,7 @@ import { Logo } from "@/components/Logo";
 import {
   Trash2, LogOut, Upload, Plus, Save, LayoutDashboard, Inbox, Type, Package,
   Image as ImageIcon, Star, Shield, Settings as SettingsIcon, Search, Download,
-  TrendingUp, Users, MapPin, Sparkles,
+  TrendingUp, Users, MapPin, Sparkles, Mail,
 } from "lucide-react";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, rectSortingStrategy, useSortable } from "@dnd-kit/sortable";
@@ -66,7 +66,7 @@ function Login() {
   );
 }
 
-type View = "dashboard" | "leads" | "texts" | "packages" | "gallery" | "social" | "privacy" | "settings";
+type View = "dashboard" | "leads" | "texts" | "packages" | "gallery" | "social" | "contact" | "privacy" | "settings";
 
 const NAV: { id: View; label: string; icon: any }[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -75,6 +75,7 @@ const NAV: { id: View; label: string; icon: any }[] = [
   { id: "packages", label: "Paquetes", icon: Package },
   { id: "gallery", label: "Galería", icon: ImageIcon },
   { id: "social", label: "Testimonios", icon: Star },
+  { id: "contact", label: "Contacto", icon: Mail },
   { id: "privacy", label: "Privacidad", icon: Shield },
   { id: "settings", label: "Ajustes", icon: SettingsIcon },
 ];
@@ -138,6 +139,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           {view === "packages" && <PackagesPanel />}
           {view === "gallery" && <GalleryPanel />}
           {view === "social" && <SocialPanel />}
+          {view === "contact" && <ContactPanel />}
           {view === "privacy" && <PrivacyPanel />}
           {view === "settings" && <SettingsPanel />}
         </div>
