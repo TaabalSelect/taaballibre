@@ -33,11 +33,15 @@ export const Route = createRootRoute({
       { title: "TAABAL Barras Libres — Mixología de Lujo para Bodas en la Riviera Maya" },
       { name: "description", content: "Servicio exclusivo de barras libres y mixología premium para bodas en Cancún, Tulum, Playa del Carmen, Puerto Morelos e Isla Mujeres." },
       { name: "author", content: "TAABAL" },
-      { property: "og:title", content: "TAABAL Barras Libres — Mixología de Lujo" },
-      { property: "og:description", content: "Bodas inolvidables en la Riviera Maya con mixología de autor y servicio impecable." },
+      { property: "og:title", content: "TAABAL Barras Libres — Mixología de Lujo para Bodas en la Riviera Maya" },
+      { property: "og:description", content: "Servicio exclusivo de barras libres y mixología premium para bodas en Cancún, Tulum, Playa del Carmen, Puerto Morelos e Isla Mujeres." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "TAABAL Barras Libres — Mixología de Lujo para Bodas en la Riviera Maya" },
+      { name: "twitter:description", content: "Servicio exclusivo de barras libres y mixología premium para bodas en Cancún, Tulum, Playa del Carmen, Puerto Morelos e Isla Mujeres." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/714ed114-d5c1-41e5-9866-292ba4b69525/id-preview-99766be7--4542f19a-64d8-40ab-baf2-ae2f9c90aecb.lovable.app-1777962241031.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/714ed114-d5c1-41e5-9866-292ba4b69525/id-preview-99766be7--4542f19a-64d8-40ab-baf2-ae2f9c90aecb.lovable.app-1777962241031.png" },
     ],
     links: [
       {
