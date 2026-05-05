@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Logo } from "@/components/Logo";
 import { RabbitPeek, useRabbitsEnabled } from "@/components/RabbitPeek";
-import { MargaritaSequence } from "@/components/MargaritaSequence";
+import { ChampagneSequence } from "@/components/ChampagneSequence";
 import { Lightbox } from "@/components/Lightbox";
 import { SocialProof } from "@/components/SocialProof";
 import { useLocale, t } from "@/lib/i18n";
@@ -119,7 +119,7 @@ function Landing() {
       <Nav />
       <Hero rabbitsOn={rabbitsOn} />
       <Pillars rabbitsOn={rabbitsOn} />
-      <MargaritaSequence />
+      <ChampagneSequence />
       <Packages rabbitsOn={rabbitsOn} />
       <Gallery />
       <SocialProof />
@@ -476,8 +476,8 @@ function Footer() {
         </div>
         <div className="text-sm space-y-2">
           <p className="font-semibold text-primary">Contacto</p>
-          <p className="flex items-center gap-2 text-muted-foreground"><Mail className="h-4 w-4" /> hola@taabal.mx</p>
-          <p className="flex items-center gap-2 text-muted-foreground"><Phone className="h-4 w-4" /> +52 998 123 4567</p>
+          <p className="flex items-center gap-2 text-muted-foreground"><Mail className="h-4 w-4" /><span>hola@taabal.mx</span></p>
+          <p className="flex items-center gap-2 text-muted-foreground"><Phone className="h-4 w-4" /><span>+52 998 123 4567</span></p>
         </div>
         <div className="text-sm space-y-2">
           <p className="font-semibold text-primary">Síguenos</p>
