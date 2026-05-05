@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Logo } from "@/components/Logo";
-import { RabbitPeek } from "@/components/RabbitPeek";
+import { RabbitPeek, useRabbitsEnabled } from "@/components/RabbitPeek";
+import { Margarita3D } from "@/components/Margarita3D";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -38,7 +39,7 @@ const PILLARS = [
   { icon: MapPin, title: "Riviera Maya", desc: "Cancún, Tulum, Playa del Carmen, Puerto Morelos e Isla Mujeres. Locales, cero improvisaciones." },
 ];
 
-const PACKAGES = [
+const DEFAULT_PACKAGES = [
   { name: "Signature", price: "Desde $35,000 MXN", tagline: "La esencia TAABAL", features: ["Mixología clásica de autor", "Bartender certificado", "Cristalería premium", "Hasta 80 invitados", "4 horas de servicio"] },
   { name: "Mixología Premium", price: "Desde $65,000 MXN", tagline: "La experiencia completa", featured: true, features: ["Carta personalizada", "2 mixólogos", "Hielo cristal y garnish exótico", "Hasta 150 invitados", "6 horas de servicio", "Estación de mezcal"] },
   { name: "Personalizado", price: "Cotización a medida", tagline: "Tu boda, tus reglas", features: ["Diseño 100% a medida", "Equipo dedicado", "Cócteles con tu nombre", "Sin límite de invitados", "Servicio fluido", "Decoración temática"] },
@@ -59,15 +60,16 @@ const leadSchema = z.object({
 const WHATSAPP = "529981234567";
 
 function Landing() {
+  const rabbitsOn = useRabbitsEnabled();
   return (
     <main className="relative overflow-x-clip bg-background text-foreground">
       <Nav />
-      <Hero />
-      <Pillars />
+      <Hero rabbitsOn={rabbitsOn} />
+      <Pillars rabbitsOn={rabbitsOn} />
       <MargaritaScroll />
-      <Packages />
+      <Packages rabbitsOn={rabbitsOn} />
       <Gallery />
-      <Contact />
+      <Contact rabbitsOn={rabbitsOn} />
       <Footer />
       <FloatingWhatsApp />
     </main>
@@ -99,7 +101,7 @@ function Nav() {
   );
 }
 
-function Hero() {
+function Hero({ rabbitsOn }: { rabbitsOn: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
@@ -110,9 +112,10 @@ function Hero() {
         <img src={hero} alt="Barra libre de mixología en boda Riviera Maya" className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/20 to-background" />
       </motion.div>
-      <RabbitPeek variant="elegant" side="right" size={220} className="absolute right-[-20px] bottom-[18%] z-10" />
-      <RabbitPeek variant="watch" side="left" size={120} className="absolute left-6 top-[28%] z-10" delay={0.4} />
-      <div className="relative z-20 flex h-full flex-col items-center justify-center text-center px-6">
+      <RabbitPeek variant="elegant" side="right" size={220} enabled={rabbitsOn} className="right-[-30px] bottom-[8%]" />
+      <RabbitPeek variant="watch" side="left" size={130} enabled={rabbitsOn} className="left-2 bottom-[5%]" delay={0.4} />
+      <div className="relative z-20 flex h-full flex-col items-center justify-center text-center px-6 pointer-events-none">
+        <div className="pointer-events-auto flex flex-col items-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
           <Badge variant="outline" className="mb-6 border-primary/40 text-primary backdrop-blur-sm">
             Riviera Maya · Bodas exclusivas
@@ -143,6 +146,7 @@ function Hero() {
             </a>
           </Button>
         </motion.div>
+        </div>
       </div>
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 text-xs uppercase tracking-[0.3em] text-muted-foreground/70">
         Desliza
@@ -151,11 +155,11 @@ function Hero() {
   );
 }
 
-function Pillars() {
+function Pillars({ rabbitsOn }: { rabbitsOn: boolean }) {
   return (
     <section id="experiencia" className="relative py-32 px-6">
-      <RabbitPeek variant="howl" side="left" size={150} className="absolute left-0 top-10 opacity-60" />
-      <div className="mx-auto max-w-6xl">
+      <RabbitPeek variant="howl" side="left" size={150} enabled={rabbitsOn} className="left-[-20px] top-4 opacity-60" />
+      <div className="relative z-10 mx-auto max-w-6xl">
         <div className="text-center mb-20">
           <span className="text-xs uppercase tracking-[0.4em] text-primary">Nuestra firma</span>
           <h2 className="mt-4 font-display text-4xl md:text-6xl">Cuatro pilares, una experiencia.</h2>
@@ -185,18 +189,12 @@ function Pillars() {
 function MargaritaScroll() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.7, 1.1, 1]);
-  const rotate = useTransform(scrollYProgress, [0, 1], [-20, 20]);
-  const lime = useTransform(scrollYProgress, [0, 0.3, 1], [200, 40, 0]);
-  const salt = useTransform(scrollYProgress, [0.3, 0.6, 1], [-200, 0, 0]);
-  const opacityIce = useTransform(scrollYProgress, [0.4, 0.7], [0, 1]);
-  const liquid = useTransform(scrollYProgress, [0.5, 0.9], ["0%", "85%"]);
   return (
     <section ref={ref} className="relative h-[400vh]">
       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-background via-card to-background">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.15),transparent_60%)]" />
-        <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl px-6 w-full relative">
-          <div>
+        <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl px-6 w-full relative z-10">
+          <div className="relative z-10">
             <span className="text-xs uppercase tracking-[0.4em] text-accent">Nuestro ritual</span>
             <h2 className="mt-4 font-display text-4xl md:text-6xl leading-tight">
               La <span className="text-gradient-brand">margarita perfecta</span>, pieza por pieza.
@@ -205,28 +203,8 @@ function MargaritaScroll() {
               Cada elemento importa: el corte del lime, la sal artesanal, el hielo cristal, la dosificación exacta. Desliza y observa cómo nace una de nuestras firmas.
             </p>
           </div>
-          <div className="relative h-[500px] flex items-center justify-center">
-            <motion.div style={{ scale, rotate }} className="relative w-[280px] h-[440px]">
-              {/* Glass */}
-              <div className="absolute inset-x-0 top-10 mx-auto w-[240px] h-[300px] rounded-b-[140px] rounded-t-[8px] border-2 border-primary/40 bg-gradient-to-b from-primary/5 to-primary/10 backdrop-blur-sm overflow-hidden">
-                <motion.div
-                  style={{ height: liquid }}
-                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-accent via-primary to-primary/60"
-                />
-                <motion.div style={{ opacity: opacityIce }} className="absolute inset-2 flex items-end justify-center gap-1 pb-4">
-                  <div className="h-10 w-10 rounded bg-white/30 backdrop-blur-md rotate-12" />
-                  <div className="h-12 w-10 rounded bg-white/30 backdrop-blur-md -rotate-6" />
-                </motion.div>
-              </div>
-              {/* Stem */}
-              <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-1 h-20 bg-primary/40" />
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-32 h-2 rounded-full bg-primary/40" />
-              {/* Salt rim */}
-              <motion.div style={{ x: salt }} className="absolute top-10 left-1/2 -translate-x-1/2 w-[244px] h-3 rounded-full bg-white/80 shadow-lg" />
-              {/* Lime */}
-              <motion.div style={{ x: lime }} className="absolute top-6 right-2 w-12 h-12 rounded-full bg-gradient-to-br from-lime-400 to-green-600 shadow-lg" />
-            </motion.div>
-            <RabbitPeek variant="leap" side="right" size={100} className="absolute -right-4 bottom-0" />
+          <div className="relative h-[560px] w-full">
+            <Margarita3D progress={scrollYProgress} />
           </div>
         </div>
       </div>
@@ -234,17 +212,23 @@ function MargaritaScroll() {
   );
 }
 
-function Packages() {
+function Packages({ rabbitsOn }: { rabbitsOn: boolean }) {
+  const [pkgs, setPkgs] = useState<typeof DEFAULT_PACKAGES>(DEFAULT_PACKAGES);
+  useEffect(() => {
+    supabase.from("site_content").select("value").eq("key", "packages").maybeSingle().then(({ data }) => {
+      if (data?.value && Array.isArray(data.value)) setPkgs(data.value as any);
+    });
+  }, []);
   return (
     <section id="paquetes" className="relative py-32 px-6">
-      <RabbitPeek variant="stand" side="right" size={130} className="absolute right-0 top-20 opacity-70" />
-      <div className="mx-auto max-w-6xl">
+      <RabbitPeek variant="stand" side="right" size={140} enabled={rabbitsOn} className="right-[-10px] top-12 opacity-70" />
+      <div className="relative z-10 mx-auto max-w-6xl">
         <div className="text-center mb-16">
           <span className="text-xs uppercase tracking-[0.4em] text-primary">Paquetes</span>
           <h2 className="mt-4 font-display text-4xl md:text-6xl">Elige tu experiencia.</h2>
         </div>
         <div className="grid gap-8 md:grid-cols-3">
-          {PACKAGES.map((p, i) => (
+          {pkgs.map((p: any, i: number) => (
             <motion.div
               key={p.name}
               initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -258,7 +242,7 @@ function Packages() {
                 <p className="text-sm text-muted-foreground mt-1">{p.tagline}</p>
                 <p className="mt-6 text-2xl font-semibold text-primary">{p.price}</p>
                 <ul className="mt-8 space-y-3 flex-1">
-                  {p.features.map(f => (
+                  {p.features.map((f: string) => (
                     <li key={f} className="flex items-start gap-2 text-sm">
                       <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" /> <span>{f}</span>
                     </li>
@@ -301,7 +285,7 @@ function Gallery() {
   );
 }
 
-function Contact() {
+function Contact({ rabbitsOn }: { rabbitsOn: boolean }) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", wedding_date: "", location: "", guests: "", message: "" });
 
@@ -341,8 +325,8 @@ function Contact() {
 
   return (
     <section id="contacto" className="relative py-32 px-6">
-      <RabbitPeek variant="tall" side="left" size={140} className="absolute left-0 bottom-10 opacity-60" />
-      <div className="mx-auto max-w-3xl">
+      <RabbitPeek variant="tall" side="left" size={150} enabled={rabbitsOn} className="left-[-20px] bottom-8 opacity-60" />
+      <div className="relative z-10 mx-auto max-w-3xl">
         <div className="text-center mb-12">
           <span className="text-xs uppercase tracking-[0.4em] text-primary">Cotiza tu boda</span>
           <h2 className="mt-4 font-display text-4xl md:text-6xl">Brindemos juntos.</h2>

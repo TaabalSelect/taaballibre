@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Logo } from "@/components/Logo";
-import { Trash2, LogOut, Upload } from "lucide-react";
+import { Trash2, LogOut, Upload, Plus, Save } from "lucide-react";
 
 export const Route = createFileRoute("/admin-taabal")({
   head: () => ({ meta: [{ title: "Admin · TAABAL" }, { name: "robots", content: "noindex,nofollow" }] }),
@@ -29,13 +31,13 @@ function Admin() {
 }
 
 function Login() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("BARRASLIBRES@TAABALCANCUN.COM");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email: email.toLowerCase().trim(), password });
     setBusy(false);
     if (error) toast.error(error.message);
   };
@@ -66,10 +68,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         <Tabs defaultValue="leads">
           <TabsList>
             <TabsTrigger value="leads">Leads</TabsTrigger>
+            <TabsTrigger value="packages">Paquetes</TabsTrigger>
             <TabsTrigger value="gallery">Galería</TabsTrigger>
+            <TabsTrigger value="settings">Ajustes</TabsTrigger>
           </TabsList>
           <TabsContent value="leads"><LeadsPanel /></TabsContent>
+          <TabsContent value="packages"><PackagesPanel /></TabsContent>
           <TabsContent value="gallery"><GalleryPanel /></TabsContent>
+          <TabsContent value="settings"><SettingsPanel /></TabsContent>
         </Tabs>
       </div>
     </div>
@@ -105,6 +111,96 @@ function LeadsPanel() {
           </div>
         </Card>
       ))}
+    </div>
+  );
+}
+
+type Pkg = { name: string; price: string; tagline: string; featured?: boolean; features: string[] };
+
+function PackagesPanel() {
+  const [pkgs, setPkgs] = useState<Pkg[]>([]);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    supabase.from("site_content").select("value").eq("key", "packages").maybeSingle().then(({ data }) => {
+      if (Array.isArray(data?.value)) setPkgs(data!.value as Pkg[]);
+    });
+  }, []);
+  const update = (i: number, patch: Partial<Pkg>) => setPkgs(arr => arr.map((p, idx) => idx === i ? { ...p, ...patch } : p));
+  const updateFeature = (i: number, fi: number, v: string) =>
+    setPkgs(arr => arr.map((p, idx) => idx === i ? { ...p, features: p.features.map((f, j) => j === fi ? v : f) } : p));
+  const addFeature = (i: number) => update(i, { features: [...pkgs[i].features, "Nuevo elemento"] });
+  const removeFeature = (i: number, fi: number) => update(i, { features: pkgs[i].features.filter((_, j) => j !== fi) });
+  const addPkg = () => setPkgs([...pkgs, { name: "Nuevo paquete", price: "Cotización", tagline: "Descripción corta", features: ["Item 1"] }]);
+  const removePkg = (i: number) => { if (confirm("¿Eliminar paquete?")) setPkgs(pkgs.filter((_, j) => j !== i)); };
+  const save = async () => {
+    setBusy(true);
+    const { error } = await supabase.from("site_content").upsert({ key: "packages", value: pkgs as any });
+    setBusy(false);
+    if (error) toast.error(error.message); else toast.success("Paquetes actualizados");
+  };
+  return (
+    <div className="mt-6 space-y-6">
+      <div className="flex justify-between">
+        <Button variant="outline" onClick={addPkg}><Plus className="h-4 w-4 mr-2" /> Añadir paquete</Button>
+        <Button onClick={save} disabled={busy}><Save className="h-4 w-4 mr-2" /> {busy ? "Guardando..." : "Guardar cambios"}</Button>
+      </div>
+      <div className="grid gap-6 lg:grid-cols-3">
+        {pkgs.map((p, i) => (
+          <Card key={i} className="p-5 space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-muted-foreground">Paquete {i + 1}</span>
+              <Button size="icon" variant="ghost" onClick={() => removePkg(i)}><Trash2 className="h-4 w-4" /></Button>
+            </div>
+            <div><Label>Nombre</Label><Input value={p.name} onChange={e => update(i, { name: e.target.value })} /></div>
+            <div><Label>Precio</Label><Input value={p.price} onChange={e => update(i, { price: e.target.value })} /></div>
+            <div><Label>Tagline</Label><Input value={p.tagline} onChange={e => update(i, { tagline: e.target.value })} /></div>
+            <div className="flex items-center gap-2">
+              <Switch checked={!!p.featured} onCheckedChange={v => update(i, { featured: v })} />
+              <Label>Destacado</Label>
+            </div>
+            <div>
+              <Label>Elementos</Label>
+              <div className="space-y-2 mt-1">
+                {p.features.map((f, fi) => (
+                  <div key={fi} className="flex gap-2">
+                    <Input value={f} onChange={e => updateFeature(i, fi, e.target.value)} />
+                    <Button size="icon" variant="ghost" onClick={() => removeFeature(i, fi)}><Trash2 className="h-4 w-4" /></Button>
+                  </div>
+                ))}
+                <Button size="sm" variant="outline" onClick={() => addFeature(i)}><Plus className="h-4 w-4 mr-1" /> Añadir</Button>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SettingsPanel() {
+  const [enabled, setEnabled] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    supabase.from("site_content").select("value").eq("key", "rabbits_enabled").maybeSingle().then(({ data }) => {
+      setEnabled(data?.value === false ? false : true);
+      setLoaded(true);
+    });
+  }, []);
+  const toggle = async (v: boolean) => {
+    setEnabled(v);
+    const { error } = await supabase.from("site_content").upsert({ key: "rabbits_enabled", value: v as any });
+    if (error) toast.error(error.message); else toast.success(v ? "Conejos visibles" : "Conejos ocultos");
+  };
+  if (!loaded) return null;
+  return (
+    <div className="mt-6 space-y-4">
+      <Card className="p-6 flex items-center justify-between">
+        <div>
+          <h3 className="font-display text-xl">Mostrar conejos en la web</h3>
+          <p className="text-sm text-muted-foreground mt-1">Activa o desactiva todas las apariciones de los conejos en la landing page.</p>
+        </div>
+        <Switch checked={enabled} onCheckedChange={toggle} />
+      </Card>
     </div>
   );
 }
