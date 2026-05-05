@@ -184,6 +184,7 @@ function Nav({ contact }: { contact: typeof DEFAULT_CONTACT_INFO }) {
 }
 
 function Hero({ rabbitsOn }: { rabbitsOn: boolean }) {
+  const contact = useContactInfo();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
@@ -229,7 +230,7 @@ function Hero({ rabbitsOn }: { rabbitsOn: boolean }) {
             <a href="#contacto">Cotiza tu boda</a>
           </Button>
           <Button asChild size="lg" variant="outline" className="border-primary/40 hover:bg-primary/10">
-            <a href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noreferrer">
+            <a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noreferrer">
               <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp directo
             </a>
           </Button>
@@ -374,7 +375,7 @@ function Gallery() {
   );
 }
 
-function Contact({ rabbitsOn }: { rabbitsOn: boolean }) {
+function Contact({ rabbitsOn, contact }: { rabbitsOn: boolean; contact: typeof DEFAULT_CONTACT_INFO }) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", wedding_date: "", location: "", guests: "", message: "" });
   const [consent, setConsent] = useState(false);
@@ -473,7 +474,7 @@ function Contact({ rabbitsOn }: { rabbitsOn: boolean }) {
                 {loading ? "Enviando..." : "Enviar cotización"}
               </Button>
               <Button asChild type="button" size="lg" variant="outline" className="flex-1 border-primary/40">
-                <a href={`https://wa.me/${WHATSAPP}?text=${waText}`} target="_blank" rel="noreferrer">
+                <a href={`https://wa.me/${contact.whatsapp}?text=${waText}`} target="_blank" rel="noreferrer">
                   <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
                 </a>
               </Button>
@@ -486,6 +487,7 @@ function Contact({ rabbitsOn }: { rabbitsOn: boolean }) {
 }
 
 function Footer() {
+  const contact = useContactInfo();
   return (
     <footer className="border-t border-border py-12 px-6 bg-card/30">
       <div className="mx-auto max-w-6xl grid md:grid-cols-3 gap-8 items-start">
@@ -495,8 +497,8 @@ function Footer() {
         </div>
         <div className="text-sm space-y-2">
           <p className="font-semibold text-primary">Contacto</p>
-          <p className="flex items-center gap-2 text-muted-foreground"><Mail className="h-4 w-4" /><span>hola@taabal.mx</span></p>
-          <p className="flex items-center gap-2 text-muted-foreground"><Phone className="h-4 w-4" /><span>+52 998 123 4567</span></p>
+          <p className="flex items-center gap-2 text-muted-foreground"><Mail className="h-4 w-4" /><a href={`mailto:${contact.email}`} className="hover:text-primary">{contact.email}</a></p>
+          <p className="flex items-center gap-2 text-muted-foreground"><Phone className="h-4 w-4" /><a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noreferrer" className="hover:text-primary">{contact.phone}</a></p>
         </div>
         <div className="text-sm space-y-2">
           <p className="font-semibold text-primary">Síguenos</p>
@@ -511,10 +513,10 @@ function Footer() {
   );
 }
 
-function FloatingWhatsApp() {
+function FloatingWhatsApp({ whatsapp }: { whatsapp: string }) {
   return (
     <a
-      href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noreferrer"
+      href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer"
       className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-2xl hover:scale-110 transition-transform"
       aria-label="WhatsApp"
     >
