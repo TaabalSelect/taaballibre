@@ -556,13 +556,16 @@ function ChampagneFeature() {
           transition={{ duration: 1 }}
           className="relative"
         >
+          {/* Glow ambiental detrás para fundir con el fondo */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 blur-3xl opacity-70 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.35),rgba(255,180,80,0.18)_40%,transparent_70%)]" />
           <motion.img
             src={champagnePop}
             alt="Botella de champagne descorchándose con explosión de espuma"
-            className="w-full h-auto drop-shadow-[0_20px_60px_rgba(168,85,247,0.4)]"
+            className="w-full h-auto select-none [filter:drop-shadow(0_30px_40px_rgba(0,0,0,0.55))_drop-shadow(0_0_80px_rgba(168,85,247,0.35))]"
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             loading="lazy"
+            draggable={false}
           />
         </motion.div>
       </div>
