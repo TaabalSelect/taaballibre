@@ -524,3 +524,191 @@ function FloatingWhatsApp({ whatsapp }: { whatsapp: string }) {
     </a>
   );
 }
+
+/* ---------- Nuevas secciones ---------- */
+
+function ChampagneFeature() {
+  return (
+    <section className="relative overflow-hidden py-24 md:py-32 px-6 bg-gradient-to-b from-background via-card/40 to-background">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(168,85,247,0.18),transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(255,180,80,0.12),transparent_50%)]" />
+      <div className="relative z-10 mx-auto max-w-7xl grid lg:grid-cols-2 gap-12 items-center">
+        <motion.div
+          initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          <span className="text-xs uppercase tracking-[0.4em] text-accent">El brindis</span>
+          <h2 className="mt-4 font-display text-4xl md:text-6xl leading-tight">
+            El momento que <span className="text-gradient-brand">enmarca</span> tu boda.
+          </h2>
+          <p className="mt-6 text-muted-foreground text-lg max-w-lg">
+            Desde el descorche hasta la última copa, cuidamos cada instante para que tu celebración sea irrepetible. Sin prisa, sin filas, sin compromisos.
+          </p>
+          <div className="mt-8 grid grid-cols-2 gap-4 max-w-md">
+            <div className="flex items-start gap-2"><Check className="h-4 w-4 text-primary mt-0.5" /><span className="text-sm">Servicio cronometrado</span></div>
+            <div className="flex items-start gap-2"><Check className="h-4 w-4 text-primary mt-0.5" /><span className="text-sm">Cristalería premium</span></div>
+            <div className="flex items-start gap-2"><Check className="h-4 w-4 text-primary mt-0.5" /><span className="text-sm">Hielo cristal</span></div>
+            <div className="flex items-start gap-2"><Check className="h-4 w-4 text-primary mt-0.5" /><span className="text-sm">Mixólogos certificados</span></div>
+          </div>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+          transition={{ duration: 1 }}
+          className="relative"
+        >
+          <motion.img
+            src={champagnePop}
+            alt="Botella de champagne descorchándose con explosión de espuma"
+            className="w-full h-auto drop-shadow-[0_20px_60px_rgba(168,85,247,0.4)]"
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            loading="lazy"
+          />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function WhyUs() {
+  const reasons = [
+    { icon: Award, title: "Más de 200 bodas servidas", desc: "Experiencia comprobada en los venues más exclusivos de la Riviera Maya." },
+    { icon: Clock, title: "Servicio sin filas", desc: "Calculamos staff y barras según invitados. Nadie espera más de 90 segundos." },
+    { icon: Heart, title: "Insumos top shelf", desc: "Trabajamos solo con destilados premium y frutas frescas locales." },
+    { icon: ShieldCheck, title: "Seguro de evento", desc: "Equipo asegurado y permisos vigentes. Tranquilidad total para ti y tu wedding planner." },
+    { icon: Users, title: "Equipo bilingüe", desc: "Atendemos a tus invitados internacionales con la misma calidez en español e inglés." },
+    { icon: Sparkles, title: "Coctelería de autor", desc: "Diseñamos cócteles con tu nombre, inspirados en tu historia y tu paleta de boda." },
+  ];
+  return (
+    <section className="relative py-32 px-6 bg-card/20">
+      <div className="mx-auto max-w-6xl">
+        <div className="text-center mb-16">
+          <span className="text-xs uppercase tracking-[0.4em] text-primary">Por qué nosotros</span>
+          <h2 className="mt-4 font-display text-4xl md:text-6xl">La diferencia <span className="text-gradient-brand">TAABAL</span>.</h2>
+          <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">No solo servimos bebidas. Diseñamos la experiencia que tus invitados recordarán para siempre.</p>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {reasons.map((r, i) => (
+            <motion.div
+              key={r.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+            >
+              <Card className="h-full p-6 bg-card/60 border-border hover:border-primary/40 transition-all hover:translate-y-[-4px] backdrop-blur">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                  <r.icon className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="font-display text-xl mb-2">{r.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{r.desc}</p>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProcessSteps() {
+  const steps = [
+    { n: "01", title: "Cotización", desc: "Cuéntanos los detalles. Te respondemos en menos de 24h con propuesta personalizada." },
+    { n: "02", title: "Diseño", desc: "Curamos tu carta, paletas y staff. Probamos cócteles juntos antes del gran día." },
+    { n: "03", title: "Montaje", desc: "Llegamos 3h antes. Barras impecables, staff uniformado, todo listo para tu llegada." },
+    { n: "04", title: "Brindis", desc: "Servicio fluido y memorable. Tu única tarea: celebrar." },
+  ];
+  return (
+    <section className="relative py-32 px-6">
+      <div className="mx-auto max-w-6xl">
+        <div className="text-center mb-16">
+          <span className="text-xs uppercase tracking-[0.4em] text-primary">Cómo trabajamos</span>
+          <h2 className="mt-4 font-display text-4xl md:text-6xl">De la idea al <span className="text-gradient-brand">brindis</span>.</h2>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 relative">
+          {steps.map((s, i) => (
+            <motion.div
+              key={s.n}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="relative"
+            >
+              <Card className="h-full p-6 bg-card/40 border-border hover:border-primary/40 transition">
+                <p className="font-display text-5xl text-primary/30 mb-3">{s.n}</p>
+                <h3 className="font-display text-2xl mb-2">{s.title}</h3>
+                <p className="text-sm text-muted-foreground">{s.desc}</p>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Stats() {
+  const stats = [
+    { n: "200+", l: "Bodas celebradas" },
+    { n: "98%", l: "Clientes que recomiendan" },
+    { n: "5★", l: "Promedio de reseñas" },
+    { n: "5", l: "Destinos en Riviera Maya" },
+  ];
+  return (
+    <section className="relative py-24 px-6 bg-gradient-to-r from-card via-background to-card border-y border-border">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.08),transparent_60%)]" />
+      <div className="relative z-10 mx-auto max-w-6xl grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        {stats.map((s, i) => (
+          <motion.div
+            key={s.l}
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: i * 0.1 }}
+          >
+            <p className="font-display text-5xl md:text-6xl text-gradient-brand">{s.n}</p>
+            <p className="mt-2 text-xs uppercase tracking-[0.3em] text-muted-foreground">{s.l}</p>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function FAQ() {
+  const faqs = [
+    { q: "¿Con cuánto tiempo de anticipación debo reservar?", a: "Recomendamos reservar al menos 4-6 meses antes de tu boda, sobre todo en temporada alta (noviembre a abril). Para fechas muy específicas, hasta 12 meses." },
+    { q: "¿Trabajan en cualquier venue de la Riviera Maya?", a: "Sí. Operamos en Cancún, Tulum, Playa del Carmen, Puerto Morelos e Isla Mujeres, en venues privados, hoteles, beach clubs y haciendas. Nos coordinamos directo con tu wedding planner." },
+    { q: "¿Qué incluye el servicio de barra libre?", a: "Bartenders certificados, mobiliario de barra, cristalería premium, hielo cristal, mixers, frutas frescas, garnish, y la carta de cócteles diseñada contigo. Las botellas pueden incluirse o ser provistas por ti." },
+    { q: "¿Pueden crear cócteles personalizados con nuestros nombres?", a: "Por supuesto. Es uno de nuestros sellos: dos cócteles signature inspirados en la pareja, su historia y la paleta visual de la boda." },
+    { q: "¿Qué pasa si llueve o hay clima adverso?", a: "Tenemos planes de contingencia. Coordinamos con tu wedding planner para mover la barra a zona cubierta sin interrumpir el servicio." },
+    { q: "¿Aceptan eventos pequeños o íntimos?", a: "Sí. Atendemos bodas desde 30 invitados hasta más de 500. La calidad y atención son las mismas." },
+  ];
+  return (
+    <section className="relative py-32 px-6 bg-card/20">
+      <div className="mx-auto max-w-3xl">
+        <div className="text-center mb-12">
+          <span className="text-xs uppercase tracking-[0.4em] text-primary">Preguntas frecuentes</span>
+          <h2 className="mt-4 font-display text-4xl md:text-6xl">Antes de <span className="text-gradient-brand">brindar</span>.</h2>
+        </div>
+        <div className="space-y-3">
+          {faqs.map((f, i) => (
+            <motion.details
+              key={f.q}
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+              className="group rounded-lg border border-border bg-card/60 p-5 hover:border-primary/40 transition"
+            >
+              <summary className="cursor-pointer flex items-center justify-between gap-4 font-medium list-none">
+                <span>{f.q}</span>
+                <span className="text-primary text-2xl transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{f.a}</p>
+            </motion.details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
