@@ -443,6 +443,12 @@ function Contact({ rabbitsOn }: { rabbitsOn: boolean }) {
               <Label htmlFor="message">Cuéntanos tu visión</Label>
               <Textarea id="message" rows={4} value={form.message} onChange={set("message")} maxLength={1000} />
             </div>
+            <div className="md:col-span-2 flex items-start gap-3 rounded-md border border-border/60 bg-background/40 p-3">
+              <Checkbox id="consent" checked={consent} onCheckedChange={(v) => setConsent(v === true)} className="mt-1" />
+              <Label htmlFor="consent" className="text-xs text-muted-foreground leading-relaxed font-normal cursor-pointer">
+                Acepto el tratamiento de mis datos personales conforme a la <a href="/privacidad" target="_blank" className="text-primary underline">Política de Privacidad</a> de TAABAL Barras Libres y la LFPDPPP de México. *
+              </Label>
+            </div>
             <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
               <Button type="submit" size="lg" disabled={loading} className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90">
                 {loading ? "Enviando..." : "Enviar cotización"}
