@@ -242,7 +242,7 @@ function Packages({ rabbitsOn }: { rabbitsOn: boolean }) {
                 <p className="text-sm text-muted-foreground mt-1">{p.tagline}</p>
                 <p className="mt-6 text-2xl font-semibold text-primary">{p.price}</p>
                 <ul className="mt-8 space-y-3 flex-1">
-                  {p.features.map(f => (
+                  {p.features.map((f: string) => (
                     <li key={f} className="flex items-start gap-2 text-sm">
                       <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" /> <span>{f}</span>
                     </li>
