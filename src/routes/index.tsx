@@ -160,7 +160,7 @@ function Nav({ contact }: { contact: typeof DEFAULT_CONTACT_INFO }) {
   return (
     <header className={`fixed inset-x-0 top-0 z-50 transition-all ${scrolled ? "backdrop-blur-xl bg-background/70 border-b border-border" : "bg-transparent"}`}>
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Logo className="h-10 w-auto" />
+        <Logo className="h-12 w-auto border-0 mx-0 object-fill border-none py-px px-px pb-0 pr-0 pl-0 pt-0" />
         <nav className="hidden md:flex items-center gap-8 text-sm tracking-wide">
           <a href="#experiencia" className="hover:text-primary transition">{tr.experience}</a>
           <a href="#paquetes" className="hover:text-primary transition">{tr.packages}</a>
