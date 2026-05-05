@@ -313,6 +313,13 @@ function Packages({ rabbitsOn }: { rabbitsOn: boolean }) {
 }
 
 function Gallery() {
+  const [imgs, setImgs] = useState<{ url: string; alt?: string }[]>(FALLBACK_GALLERY);
+  const [open, setOpen] = useState<number | null>(null);
+  useEffect(() => {
+    supabase.from("gallery_images").select("url,alt").order("position").then(({ data }) => {
+      if (data && data.length) setImgs(data.map((d: any) => ({ url: d.url, alt: d.alt || "Boda Riviera Maya" })));
+    });
+  }, []);
   return (
     <section id="galeria" className="relative py-32 px-6 bg-card/30">
       <div className="mx-auto max-w-7xl">
@@ -321,18 +328,29 @@ function Gallery() {
           <h2 className="mt-4 font-display text-4xl md:text-6xl">Bodas que ya brindaron con nosotros.</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-3 grid-cols-2">
-          {GALLERY.map((src, i) => (
-            <motion.div
+          {imgs.map((img, i) => (
+            <motion.button
+              type="button"
               key={i}
+              onClick={() => setOpen(i)}
               initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
               transition={{ duration: 0.6, delay: (i % 3) * 0.1 }}
-              className={`overflow-hidden rounded-2xl border border-border ${i === 0 ? "md:col-span-2 md:row-span-2 aspect-square md:aspect-auto" : "aspect-square"}`}
+              className={`group overflow-hidden rounded-2xl border border-border cursor-zoom-in ${i === 0 ? "md:col-span-2 md:row-span-2 aspect-square md:aspect-auto" : "aspect-square"}`}
             >
-              <img src={src} alt={`Boda Riviera Maya ${i + 1}`} className="h-full w-full object-cover hover:scale-105 transition-transform duration-700" loading="lazy" />
-            </motion.div>
+              <img src={img.url} alt={img.alt || `Boda Riviera Maya ${i + 1}`} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
+            </motion.button>
           ))}
         </div>
       </div>
+      {open !== null && (
+        <Lightbox
+          images={imgs}
+          index={open}
+          onClose={() => setOpen(null)}
+          onPrev={() => setOpen(i => (i === null ? 0 : (i - 1 + imgs.length) % imgs.length))}
+          onNext={() => setOpen(i => (i === null ? 0 : (i + 1) % imgs.length))}
+        />
+      )}
     </section>
   );
 }
@@ -340,12 +358,23 @@ function Gallery() {
 function Contact({ rabbitsOn }: { rabbitsOn: boolean }) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", wedding_date: "", location: "", guests: "", message: "" });
+  const [consent, setConsent] = useState(false);
+  const [text, setText] = useState(DEFAULT_CONTACT_TEXT);
+  useEffect(() => {
+    supabase.from("site_content").select("value").eq("key", "contact_text").maybeSingle().then(({ data }) => {
+      if (data?.value && typeof data.value === "object") setText({ ...DEFAULT_CONTACT_TEXT, ...(data.value as any) });
+    });
+  }, []);
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }));
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!consent) {
+      toast.error("Debes aceptar el aviso de privacidad para continuar.");
+      return;
+    }
     const parsed = leadSchema.safeParse(form);
     if (!parsed.success) {
       toast.error(parsed.error.issues[0].message);
@@ -380,9 +409,9 @@ function Contact({ rabbitsOn }: { rabbitsOn: boolean }) {
       <RabbitPeek variant="tall" side="left" size={150} enabled={rabbitsOn} className="left-[-20px] bottom-8 opacity-60" />
       <div className="relative z-10 mx-auto max-w-3xl">
         <div className="text-center mb-12">
-          <span className="text-xs uppercase tracking-[0.4em] text-primary">Cotiza tu boda</span>
-          <h2 className="mt-4 font-display text-4xl md:text-6xl">Brindemos juntos.</h2>
-          <p className="mt-4 text-muted-foreground">Cuéntanos los detalles. Te respondemos en menos de 24 horas.</p>
+          <span className="text-xs uppercase tracking-[0.4em] text-primary">{text.eyebrow}</span>
+          <h2 className="mt-4 font-display text-4xl md:text-6xl">{text.title}</h2>
+          <p className="mt-4 text-muted-foreground">{text.subtitle}</p>
         </div>
         <Card className="p-8 bg-card/80 backdrop-blur border-border">
           <form onSubmit={submit} className="grid gap-5 md:grid-cols-2">
